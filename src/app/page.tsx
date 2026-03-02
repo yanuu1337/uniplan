@@ -1,102 +1,188 @@
 import { headers } from "next/headers";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { LatestPost } from "#/app/_components/post";
 import { auth } from "#/server/better-auth";
 import { getSession } from "#/server/better-auth/server";
-import { api, HydrateClient } from "#/trpc/server";
-
+import { Button } from '@heroui/react';
+import { HydrateClient } from "#/trpc/server";
+import { Calendar, Clock, Group, Pin } from "lucide-react";
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
   const session = await getSession();
-
-  if (session) {
-    void api.post.getLatest.prefetch();
-  }
 
   return (
     <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
+      <main className="min-h-screen bg-linear-to-tr from-accent via-background to-background-secondary">
+        {/* Navigation */}
+        <nav className="border-b border-border bg-linear-to-bl from-accent via-background to-background-secondary">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex h-16 items-center justify-between">
+              <div className="flex items-center">
+                <h1 className="text-2xl font-bold text-foreground">
+                  Uni<span className="text-accent">Plan</span>
+                </h1>
               </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
-
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
-              </p>
-              {!session ? (
-                <form>
-                  <button
-                    className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-                    formAction={async () => {
-                      "use server";
-                      const res = await auth.api.signInSocial({
-                        body: {
-                          provider: "github",
-                          callbackURL: "/",
-                        },
-                      });
-                      if (!res.url) {
-                        throw new Error("No URL returned from signInSocial");
-                      }
-                      redirect(res.url);
-                    }}
-                  >
-                    Sign in with Github
-                  </button>
-                </form>
-              ) : (
-                <form>
-                  <button
-                    className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-                    formAction={async () => {
-                      "use server";
-                      await auth.api.signOut({
-                        headers: await headers(),
-                      });
-                      redirect("/");
-                    }}
-                  >
-                    Sign out
-                  </button>
-                </form>
+              {session && (
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-gray-600">
+                    {session.user?.name}
+                  </span>
+                  <form>
+                    <button
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      formAction={async () => {
+                        "use server";
+                        await auth.api.signOut({
+                          headers: await headers(),
+                        });
+                        redirect("/");
+                      }}
+                    >
+                      Sign out
+                    </button>
+                  </form>
+                </div>
               )}
             </div>
           </div>
+        </nav>
 
-          {session?.user && <LatestPost />}
-        </div>
+        {/* Hero Section */}
+        <section className="relative overflow-hidden ">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+            <div className="mx-auto max-w-4xl text-center">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6">
+                Your classes,{" "}
+                <span className="text-accent">all in one place</span>
+              </h1>
+              <p className="text-xl sm:text-2xl text-muted-foreground mb-4 leading-relaxed">
+                Tired of having to check multiple sources to figure out where and
+                when you have classes?
+              </p>
+              <p className="text-lg text-muted-foreground mb-12">
+                UniPlan - an academic calendar for students.
+              </p>
+
+              {!session && (
+                <form className="flex flex-col gap-2 items-center">
+                  <Button
+                    className=" items-center  hover:scale-105 hover:cursor-pointer bg-accent px-32 py-4 text-lg font-semibold text-accent-foreground shadow-lg transition-all hover:bg-blue-700 hover:shadow-xl active:scale-95"
+                    size="lg"
+                    onPress={async () => {
+                      "use server";
+                      redirect("/signup");
+                    }}
+                    
+                  >
+                    
+                    Sign Up
+                  </Button>
+                  <Button
+                    className=" items-center  hover:scale-105 bg-background-muted px-32 py-4 text-lg font-semibold text-foreground shadow-lg transition-all  hover:shadow-xl active:scale-95"
+                    size="lg"
+                    variant="secondary"
+                    onPress={async () => {
+                      "use server";
+                      redirect("/signin");
+                    }}
+                  >
+                    Sign In
+                  </Button>
+                </form>
+              )}
+
+              {session && (
+                <div className="mt-8">
+                  <p className="text-lg text-foreground mb-4">
+                    Welcome back,{" "}
+                    <span className="font-semibold text-foreground">
+                      {session.user?.name}
+                    </span>
+                  </p>
+                  <a
+                    href="/dashboard"
+                    className="inline-flex items-center gap-2 rounded-lg bg-accent px-8 py-4 text-lg font-semibold text-accent-foreground shadow-lg transition-all hover:bg-accent/80 hover:shadow-xl active:scale-95"
+                  >
+                    Go to Calendar
+                    <svg
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-24 rounded-lg mx-2 md:mx-8 border border-border bg-background-secondary">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-6xl">
+              <div className="grid gap-12 md:grid-cols-4">
+                <div className="text-center">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-background-tertiary">
+                    <Calendar className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold text-foreground">
+                    One Calendar
+                  </h3>
+                  <p className="text-muted-foreground">
+                    All your classes in a single, unified calendar view. No
+                    more switching between apps.
+                  </p>
+                </div>
+
+                <div className="text-center">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-background-tertiary">
+                    <Group className="h-6 w-6 text-foreground" />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold text-foreground">
+                    Class Groups
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Create protected class groups to share your calendar with other students. Join existing groups or create your own.
+                  </p>
+                </div>
+
+                <div className="text-center">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-background-tertiary">
+                    <Pin className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold text-foreground">
+                    Individual Events
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Add your individual classes or one-time events to the calendar to get a more detailed view.
+                  </p>
+                </div>
+
+                <div className="text-center">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-background-tertiary">
+                    <Clock className="h-6 w-6 text-green-600" />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold text-foreground">
+                    Time Management
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Plan your day effectively with a clear view of your
+                    schedule and upcoming classes.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        
       </main>
     </HydrateClient>
   );
