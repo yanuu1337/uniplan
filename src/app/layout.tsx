@@ -2,8 +2,10 @@ import "#/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
+import { IBM_Plex_Mono } from "next/font/google";
 
 import { TRPCReactProvider } from "#/trpc/react";
+import Nav from "./components/nav";
 
 export const metadata: Metadata = {
   title: "UniPlan - Academic Calendar for Students",
@@ -11,18 +13,25 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
+// const geist = Geist({
+//   subsets: ["latin"],
+//   variable: "--font-geist-sans",
+// });
 
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  variable: "--font-ibm-plex-mono",
+  weight: ["100", "200", "300", "400", "500", "600", "700"],
+});
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-theme="dark" className={`${geist.variable} dark`}>
+    <html lang="en" data-theme="dark" className={`${ibmPlexMono.variable} dark bg-background`}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          <Nav />
+          {children}</TRPCReactProvider>
       </body>
     </html>
   );

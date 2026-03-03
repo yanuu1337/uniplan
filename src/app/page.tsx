@@ -3,48 +3,16 @@ import { redirect } from "next/navigation";
 
 import { auth } from "#/server/better-auth";
 import { getSession } from "#/server/better-auth/server";
-import { Button } from '@heroui/react';
+import { Button, ButtonGroup } from '@heroui/react';
 import { HydrateClient } from "#/trpc/server";
-import { Calendar, Clock, Group, Pin } from "lucide-react";
+import { ArrowRight, Calendar, ChevronsRight, Clock, Group, Pin } from "lucide-react";
 export default async function Home() {
   const session = await getSession();
 
   return (
     <HydrateClient>
       <main className="min-h-screen bg-linear-to-tr from-accent via-background to-background-secondary">
-        {/* Navigation */}
-        <nav className="border-b border-border bg-linear-to-bl from-accent via-background to-background-secondary">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 items-center justify-between">
-              <div className="flex items-center">
-                <h1 className="text-2xl font-bold text-foreground">
-                  Uni<span className="text-accent">Plan</span>
-                </h1>
-              </div>
-              {session && (
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-gray-600">
-                    {session.user?.name}
-                  </span>
-                  <form>
-                    <button
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      formAction={async () => {
-                        "use server";
-                        await auth.api.signOut({
-                          headers: await headers(),
-                        });
-                        redirect("/");
-                      }}
-                    >
-                      Sign out
-                    </button>
-                  </form>
-                </div>
-              )}
-            </div>
-          </div>
-        </nav>
+        
 
         {/* Hero Section */}
         <section className="relative overflow-hidden ">
@@ -55,15 +23,18 @@ export default async function Home() {
                 <span className="text-accent">all in one place</span>
               </h1>
               <p className="text-xl sm:text-2xl text-muted-foreground mb-4 leading-relaxed">
-                Tired of having to check multiple sources to figure out where and
+                Tired of having to check <span className="font-bold">multiple</span> sources to figure out where and
                 when you have classes?
               </p>
               <p className="text-lg text-muted-foreground mb-12">
-                UniPlan - an academic calendar for students.
+                UniPlan - an academic calendar - made <span className="font-bold">your</span> way.
               </p>
 
               {!session && (
                 <form className="flex flex-col gap-2 items-center">
+                  <ButtonGroup 
+                    
+                  >
                   <Button
                     className=" items-center  hover:scale-105 hover:cursor-pointer bg-accent px-32 py-4 text-lg font-semibold text-accent-foreground shadow-lg transition-all hover:bg-blue-700 hover:shadow-xl active:scale-95"
                     size="lg"
@@ -87,6 +58,7 @@ export default async function Home() {
                   >
                     Sign In
                   </Button>
+                  </ButtonGroup>
                 </form>
               )}
 
@@ -95,28 +67,16 @@ export default async function Home() {
                   <p className="text-lg text-foreground mb-4">
                     Welcome back,{" "}
                     <span className="font-semibold text-foreground">
-                      {session.user?.name}
+                      {session?.user?.name || "Guest"}
                     </span>
                   </p>
-                  <a
-                    href="/dashboard"
-                    className="inline-flex items-center gap-2 rounded-lg bg-accent px-8 py-4 text-lg font-semibold text-accent-foreground shadow-lg transition-all hover:bg-accent/80 hover:shadow-xl active:scale-95"
+                  <Button
+                    size="lg"
+                    className="items-center  hover:scale-105 hover:cursor-pointer bg-accent px-32 py-4 text-lg font-semibold text-accent-foreground shadow-lg transition-all hover:bg-accent-hover hover:shadow-xl "
                   >
                     Go to Calendar
-                    <svg
-                      className="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </a>
+                    <ChevronsRight className="h-5 w-5" />
+                  </Button>
                 </div>
               )}
             </div>
@@ -124,10 +84,10 @@ export default async function Home() {
         </section>
 
         {/* Features Section */}
-        <section className="py-24 rounded-lg mx-2 md:mx-8 border border-border bg-background-secondary">
+        <section className="py-24 rounded-lg mx-2 md:mx-16 border border-border bg-background-secondary">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-6xl">
-              <div className="grid gap-12 md:grid-cols-4">
+              <div className="grid gap-24 md:grid-cols-4">
                 <div className="text-center">
                   <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-background-tertiary">
                     <Calendar className="h-6 w-6 text-blue-600" />
