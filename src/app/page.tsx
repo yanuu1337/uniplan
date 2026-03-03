@@ -1,11 +1,10 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { auth } from "#/server/better-auth";
 import { getSession } from "#/server/better-auth/server";
 import { Button, ButtonGroup } from '@heroui/react';
 import { HydrateClient } from "#/trpc/server";
-import { ArrowRight, Calendar, ChevronsRight, Clock, Group, Pin } from "lucide-react";
+import { Calendar, ChevronsRight, Clock, Group, Pin } from "lucide-react";
 export default async function Home() {
   const session = await getSession();
 

@@ -5,7 +5,7 @@ import { Geist } from "next/font/google";
 import { IBM_Plex_Mono } from "next/font/google";
 
 import { TRPCReactProvider } from "#/trpc/react";
-import Nav from "./components/nav";
+import Nav from "#/components/nav";
 
 export const metadata: Metadata = {
   title: "UniPlan - Academic Calendar for Students",
