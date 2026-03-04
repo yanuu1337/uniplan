@@ -1,19 +1,29 @@
-import { authClient } from "#/server/better-auth/client";
+"use server";
+import { auth } from "#/server/better-auth/config";
+import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+type SignInState = { error: string };
+
 export const signIn = async (
-  prevState: { error: string | undefined },
+  prevState: SignInState | undefined,
   formData: FormData,
 ) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  const user = await authClient.signIn.email({
-    email,
-    password,
+  const response = await auth.api.signInEmail({
+    body: {
+      email,
+      password,
+    },
+    headers: await headers(),
   });
-  if (user.error) {
-    return { error: user.error.message };
+  if (response.redirect && response.url) {
+    void redirect(response.url);
   }
-  redirect("/");
+  if (!response.user) return { error: "Invalid email or password" };
+  revalidatePath("/", "layout");
+  void redirect("/");
 };

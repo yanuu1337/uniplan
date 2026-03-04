@@ -1,50 +1,69 @@
 "use client";
-import {
-  Label,
-  Form,
-  TextField,
-  Button,
-  FieldError,
-  Input,
-  Link,
-} from "@heroui/react";
-import { ArrowRightIcon } from "lucide-react";
-import { signIn } from "./actions";
+
+import Link from "next/link";
+import { ArrowRightIcon, Loader2 } from "lucide-react";
 import { useActionState } from "react";
 
+import { Button } from "#/components/ui/button";
+import { Input } from "#/components/ui/input";
+
+import { signIn } from "./actions";
+
+type SignInState = { error: string };
+
 export default function SignInForm() {
-  const [state, formAction] = useActionState(signIn, {
-    error: undefined,
-  });
+  const [rawState, formAction, isPending] = useActionState(signIn, {
+    error: "",
+  } satisfies SignInState);
+  const state = rawState ?? { error: "" };
+
   return (
-    <Form action={formAction} className="flex w-96 flex-col gap-4">
-      <TextField
-        isRequired
-        name="email"
-        type="email"
-        validate={(value) => {
-          if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
-            return "Please enter a valid email address";
-          }
-        }}
-      >
-        <Label>Email</Label>
-        <Input placeholder="john@example.com" />
-        <FieldError />
-      </TextField>
-      <TextField isRequired name="password" type="password">
-        <Label>Password</Label>
-        <Input placeholder="Enter your password" />
-        <FieldError />
-      </TextField>
-      <Button type="submit" className="w-full">
-        Sign In
-        <ArrowRightIcon className="h-4 w-4" />
+    <form action={formAction} className="flex w-full max-w-md flex-col gap-4">
+      <div className="flex flex-col gap-1">
+        <label htmlFor="email" className="text-foreground text-sm font-medium">
+          Email
+        </label>
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          required
+          placeholder="john@example.com"
+        />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label
+          htmlFor="password"
+          className="text-foreground text-sm font-medium"
+        >
+          Password
+        </label>
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          required
+          placeholder="Enter your password"
+        />
+      </div>
+
+      {state.error && <p className="text-destructive text-sm">{state.error}</p>}
+
+      <Button type="submit" className="w-full" disabled={isPending}>
+        {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sign In"}
+        <ArrowRightIcon className="ml-1.5 h-4 w-4" />
       </Button>
-      {state.error && <p className="text-red-500">{state.error}</p>}
-      <Link href="/sign-up" className="text-sm text-gray-500">
-        Don&apos;t have an account? Sign up
-      </Link>
-    </Form>
+
+      <p className="text-muted-foreground text-sm">
+        Don&apos;t have an account?{" "}
+        <Link
+          href="/sign-up"
+          className="text-primary font-medium underline-offset-4 hover:underline"
+        >
+          Sign up
+        </Link>
+      </p>
+    </form>
   );
 }

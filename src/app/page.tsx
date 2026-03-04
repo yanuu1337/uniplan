@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { getSession } from "#/server/better-auth/server";
-import { Button, ButtonGroup } from "@heroui/react";
+import { Button } from "#/components/ui/button";
 import { HydrateClient } from "#/trpc/server";
 import { Calendar, ChevronsRight, Clock, Group, Pin } from "lucide-react";
 export default async function Home() {
@@ -16,7 +16,7 @@ export default async function Home() {
             <div className="mx-auto max-w-4xl text-center">
               <h1 className="text-foreground mb-6 text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
                 Your classes,{" "}
-                <span className="text-accent">all in one place</span>
+                <span className="text-primary">all in one place</span>
               </h1>
               <p className="text-muted-foreground mb-4 text-xl leading-relaxed sm:text-2xl">
                 Tired of having to check{" "}
@@ -30,11 +30,11 @@ export default async function Home() {
 
               {!session && (
                 <form className="flex flex-col items-center gap-2">
-                  <ButtonGroup>
+                  <div className="flex flex-col gap-2 sm:flex-row">
                     <Button
-                      className="bg-accent text-accent-foreground items-center px-32 py-4 text-lg font-semibold shadow-lg transition-all hover:scale-105 hover:cursor-pointer hover:bg-blue-700 hover:shadow-xl active:scale-95"
+                      className="bg-primary text-primary-foreground items-center px-32 py-4 text-lg font-semibold shadow-lg transition-all hover:scale-105 hover:cursor-pointer hover:bg-blue-700 hover:shadow-xl active:scale-95"
                       size="lg"
-                      onPress={async () => {
+                      onClick={async () => {
                         "use server";
                         redirect("/sign-up");
                       }}
@@ -45,14 +45,14 @@ export default async function Home() {
                       className="bg-background-muted text-foreground items-center px-32 py-4 text-lg font-semibold shadow-lg transition-all hover:scale-105 hover:shadow-xl active:scale-95"
                       size="lg"
                       variant="secondary"
-                      onPress={async () => {
+                      onClick={async () => {
                         "use server";
                         redirect("/signin");
                       }}
                     >
                       Sign In
                     </Button>
-                  </ButtonGroup>
+                  </div>
                 </form>
               )}
 
@@ -66,11 +66,11 @@ export default async function Home() {
                   </p>
                   <Button
                     size="lg"
-                    onPress={async () => {
+                    onClick={async () => {
                       "use server";
                       redirect("/calendar");
                     }}
-                    className="bg-accent text-accent-foreground hover:bg-accent-hover items-center px-32 py-4 text-lg font-semibold shadow-lg transition-all hover:scale-105 hover:cursor-pointer hover:shadow-xl"
+                    className="bg-primary text-primary-foreground hover:bg-primary/80 items-center px-32 py-4 text-lg font-semibold shadow-lg transition-all hover:scale-105 hover:cursor-pointer hover:shadow-xl"
                   >
                     Go to Calendar
                     <ChevronsRight className="h-5 w-5" />
@@ -87,7 +87,7 @@ export default async function Home() {
             <div className="mx-auto max-w-6xl">
               <div className="grid gap-24 md:grid-cols-4">
                 <div className="text-center">
-                  <div className="bg-background-tertiary mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+                  <div className="bg-accent mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
                     <Calendar className="h-6 w-6 text-blue-600" />
                   </div>
                   <h3 className="text-foreground mb-2 text-lg font-semibold">
@@ -100,7 +100,7 @@ export default async function Home() {
                 </div>
 
                 <div className="text-center">
-                  <div className="bg-background-tertiary mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+                  <div className="bg-accent mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
                     <Group className="text-foreground h-6 w-6" />
                   </div>
                   <h3 className="text-foreground mb-2 text-lg font-semibold">
@@ -113,7 +113,7 @@ export default async function Home() {
                 </div>
 
                 <div className="text-center">
-                  <div className="bg-background-tertiary mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+                  <div className="bg-accent mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
                     <Pin className="h-6 w-6 text-orange-600" />
                   </div>
                   <h3 className="text-foreground mb-2 text-lg font-semibold">
@@ -126,7 +126,7 @@ export default async function Home() {
                 </div>
 
                 <div className="text-center">
-                  <div className="bg-background-tertiary mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+                  <div className="bg-accent mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
                     <Clock className="h-6 w-6 text-green-600" />
                   </div>
                   <h3 className="text-foreground mb-2 text-lg font-semibold">

@@ -1,87 +1,106 @@
 "use client";
-import {
-  Form,
-  Input,
-  TextField,
-  Label,
-  FieldError,
-  Description,
-  Button,
-} from "@heroui/react";
-import { signUp } from "./actions";
+
 import { useActionState } from "react";
 import { ArrowRightIcon } from "lucide-react";
 
+import { Button } from "#/components/ui/button";
+import { Input } from "#/components/ui/input";
+import { FieldError } from "#/components/ui/field";
+
+import { signUp } from "./actions";
+
+type SignUpErrors = {
+  email?: string[];
+  name?: string[];
+  password?: string[];
+  generic?: string[];
+};
+
 export default function SignUpForm() {
-  const [state, formAction] = useActionState(signUp, {
-    errors: {},
-  });
-  const errors = state?.errors ?? {};
+  const [state, formAction, isPending] = useActionState(signUp, {
+    errors: {
+      email: [] as string[],
+      name: [] as string[],
+      password: [] as string[],
+      generic: [] as string[],
+    },
+  } satisfies { errors: SignUpErrors });
+  const errors: SignUpErrors = state?.errors ?? {};
+
   return (
-    <Form
-      action={formAction}
-      validationErrors={errors}
-      className="flex w-96 flex-col gap-4"
-    >
-      <TextField
-        isRequired
-        name="email"
-        type="email"
-        validate={(value) => {
-          if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
-            return "Please enter a valid email address";
-          }
+    <form action={formAction} className="flex w-full max-w-md flex-col gap-4">
+      <div className="flex flex-col gap-1">
+        <label htmlFor="email" className="text-foreground text-sm font-medium">
+          Email
+        </label>
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          required
+          placeholder="john@example.com"
+        />
+        <FieldError
+          className="text-xs"
+          errors={errors.email?.map((message) => ({ message }))}
+        />
+      </div>
 
-          return null;
-        }}
-      >
-        <Label>Email</Label>
-        <Input placeholder="john@example.com" />
-        <FieldError />
-      </TextField>
-      <TextField
-        isRequired
-        name="name"
-        type="text"
-        validate={(value) => {
-          if (value.length < 3) {
-            return "Name must be at least 3 characters";
-          }
-        }}
-      >
-        <Label>Name</Label>
-        <Input placeholder="John Doe" />
-        <FieldError />
-      </TextField>
+      <div className="flex flex-col gap-1">
+        <label htmlFor="name" className="text-foreground text-sm font-medium">
+          Name
+        </label>
+        <Input
+          id="name"
+          name="name"
+          type="text"
+          required
+          placeholder="John Doe"
+        />
+        <FieldError
+          className="text-xs"
+          errors={errors.name?.map((message) => ({ message }))}
+        />
+      </div>
 
-      <TextField
-        isRequired
-        minLength={8}
-        name="password"
-        type="password"
-        validate={(value) => {
-          if (value.length < 8) {
-            return "Password must be at least 8 characters";
-          }
-          if (!/[A-Z]/.test(value)) {
-            return "Password must contain at least one uppercase letter";
-          }
-          if (!/[0-9]/.test(value)) {
-            return "Password must contain at least one number";
-          }
-
-          return null;
-        }}
+      <div className="flex flex-col gap-1">
+        <label
+          htmlFor="password"
+          className="text-foreground text-sm font-medium"
+        >
+          Password
+        </label>
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          required
+          minLength={8}
+          placeholder="Enter your password"
+        />
+        <p className="text-muted-foreground text-xs">
+          Must be at least 8 characters, with an uppercase letter and a number.
+        </p>
+        <FieldError
+          className="text-xs"
+          errors={errors.password?.map((message) => ({ message }))}
+        />
+      </div>
+      {errors.generic?.map((message) => (
+        <p key={crypto.randomUUID()} className="text-destructive text-xs">
+          {message}
+        </p>
+      ))}
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={
+          isPending || Object.values(errors).some((error) => error?.length > 0)
+        }
       >
-        <Label>Password</Label>
-        <Input placeholder="Enter your password" />
-        <Description>Must be at least 8 characters</Description>
-        <FieldError />
-      </TextField>
-      <Button type="submit" className="w-full">
         Continue
-        <ArrowRightIcon className="h-4 w-4" />
+        <ArrowRightIcon className="ml-1.5 h-4 w-4" />
       </Button>
-    </Form>
+    </form>
   );
 }

@@ -1,9 +1,10 @@
 import { auth } from "#/server/better-auth";
 import { getSession } from "#/server/better-auth/server";
-import { Button, ButtonGroup } from "@heroui/react";
+import { Button } from "#/components/ui/button";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { ThemeSwitcher } from "./mode-switcher";
 
 export default async function Nav() {
   const session = await getSession();
@@ -13,55 +14,58 @@ export default async function Nav() {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <h1 className="text-foreground text-2xl font-bold">
-              Uni<span className="text-accent">Plan</span>
+              Uni<span className="text-primary">Plan</span>
             </h1>
           </div>
-          {session ? (
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">
-                {session.user?.name}
-              </span>
-              <form>
+          <div className="flex items-center gap-4">
+            {session ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-600">
+                  {session.user?.name}
+                </span>
+                <form>
+                  <Button
+                    variant="outline"
+                    type="submit"
+                    className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                    formAction={async () => {
+                      "use server";
+                      await auth.api.signOut({
+                        headers: await headers(),
+                      });
+                      revalidatePath("/");
+                      revalidatePath("/", "layout");
+                    }}
+                  >
+                    Sign out
+                  </Button>
+                </form>
+              </div>
+            ) : (
+              <div className="inline-flex gap-2">
                 <Button
-                  variant="outline"
-                  type="submit"
-                  className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-                  formAction={async () => {
+                  className="font-bold"
+                  onClick={async () => {
                     "use server";
-                    await auth.api.signOut({
-                      headers: await headers(),
-                    });
-                    revalidatePath("/");
-                    revalidatePath("/", "layout");
+                    redirect("/sign-in");
                   }}
                 >
-                  Sign out
+                  Sign in
                 </Button>
-              </form>
-            </div>
-          ) : (
-            <ButtonGroup>
-              <Button
-                className="font-bold"
-                onPress={async () => {
-                  "use server";
-                  redirect("/sign-in");
-                }}
-              >
-                Sign in
-              </Button>
-              <Button
-                variant="secondary"
-                className="font-bold"
-                onPress={async () => {
-                  "use server";
-                  redirect("/sign-up");
-                }}
-              >
-                Sign up
-              </Button>
-            </ButtonGroup>
-          )}
+                <Button
+                  variant="secondary"
+                  className="font-bold"
+                  onClick={async () => {
+                    "use server";
+                    redirect("/sign-up");
+                  }}
+                >
+                  Sign up
+                </Button>
+              </div>
+            )}
+            <ThemeSwitcher />
+          </div>
         </div>
       </div>
     </nav>

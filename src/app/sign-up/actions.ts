@@ -1,4 +1,5 @@
 "use server";
+import { env } from "#/env";
 import { auth } from "#/server/better-auth";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -13,7 +14,14 @@ const schema = z.object({
 
 export const signUp = async (
   prevState:
-    | { errors: { email?: string[]; name?: string[]; password?: string[] } }
+    | {
+        errors: {
+          email?: string[];
+          name?: string[];
+          password?: string[];
+          generic?: string[];
+        };
+      }
     | undefined,
   formData: FormData,
 ) => {
@@ -22,17 +30,25 @@ export const signUp = async (
     return { errors: validated.error.flatten().fieldErrors };
   }
 
-  const user = await auth.api.signUpEmail({
-    body: {
-      email: validated.data.email,
-      name: validated.data.name,
-      password: validated.data.password,
-    },
-  });
+  try {
+    const user = await auth.api.signUpEmail({
+      body: {
+        email: validated.data.email,
+        name: validated.data.name,
+        password: validated.data.password,
+        callbackURL: `${env.NEXT_PUBLIC_BASE_URL}/sign-up/email-confirm?email=${validated.data.email}`,
+      },
+    });
+    if (!user.token) {
+      return { errors: { email: ["Failed to sign up"] } };
+    }
 
-  if (!user.token) {
-    return { errors: { email: ["Failed to sign up"] } };
+    void redirect(`/sign-up/email-confirm?email=${validated.data.email}`);
+  } catch (err) {
+    return {
+      errors: {
+        generic: [err instanceof Error ? err.message : "Failed to sign up"],
+      },
+    };
   }
-
-  void redirect(`/sign-up/email-confirm?email=${validated.data.email}`);
 };

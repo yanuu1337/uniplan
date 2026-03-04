@@ -2,7 +2,7 @@ import "#/styles/globals.css";
 
 import { type Metadata } from "next";
 import { IBM_Plex_Mono } from "next/font/google";
-
+import { ThemeProvider } from "next-themes";
 import { TRPCReactProvider } from "#/trpc/react";
 import Nav from "#/components/nav";
 
@@ -24,13 +24,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="dark"
-      className={`${ibmPlexMono.variable} dark bg-background`}
+      suppressHydrationWarning
+      className={`${ibmPlexMono.variable} bg-background`}
     >
       <body>
         <TRPCReactProvider>
-          <Nav />
-          {children}
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Nav />
+            {children}
+          </ThemeProvider>
         </TRPCReactProvider>
       </body>
     </html>
