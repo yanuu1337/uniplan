@@ -11,6 +11,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ClassGroupType {
+  CLASS
+  PERSONAL
+}
+
 model ClassGroup {
   id                      String                   @id
   name                    String
@@ -23,6 +28,7 @@ model ClassGroup {
   events                  Event[]
   createdById             String
   createdBy               User                     @relation(fields: [createdById], references: [id], name: "classGroupCreatedBy")
+  type                    ClassGroupType           @default(CLASS)
 
   @@map("class_group")
 }
