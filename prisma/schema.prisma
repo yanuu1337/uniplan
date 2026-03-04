@@ -15,6 +15,7 @@ model ClassGroup {
   id                      String                   @id
   name                    String
   description             String?
+  password                String?
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
   members                 UserClassGroup[]
@@ -91,26 +92,26 @@ enum ClassGroupRole {
 
 // Junction table for User-ClassGroup relationship with role and preferences
 model UserClassGroup {
-  id          String         @id @default(cuid())
-  userId      String
+  id           String         @id @default(cuid())
+  userId       String
   classGroupId String
-  role        ClassGroupRole @default(MEMBER)
-  
+  role         ClassGroupRole @default(MEMBER)
+
   // Display preferences
-  isVisible   Boolean        @default(true) // Whether to show this group's events on calendar
-  color       String?        // Optional color for calendar display (hex code)
-  
+  isVisible Boolean @default(true) // Whether to show this group's events on calendar
+  color     String? // Optional color for calendar display (hex code)
+
   // Notification preferences (optional, for future use)
-  notifyBeforeMinutes Int?   // Notify X minutes before events (null = no notifications)
-  
+  notifyBeforeMinutes Int? // Notify X minutes before events (null = no notifications)
+
   // Timestamps
-  joinedAt    DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  
+  joinedAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  classGroup  ClassGroup     @relation(fields: [classGroupId], references: [id], onDelete: Cascade)
-  
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  classGroup ClassGroup @relation(fields: [classGroupId], references: [id], onDelete: Cascade)
+
   @@unique([userId, classGroupId])
   @@index([userId])
   @@index([classGroupId])
@@ -131,10 +132,10 @@ model User {
   accounts      Account[]
 
   classGroupMemberships UserClassGroup[]
+  createdClassGroups    ClassGroup[]     @relation(name: "classGroupCreatedBy")
 
   @@unique([email])
   @@map("user")
-  createdClassGroups ClassGroup[] @relation(name: "classGroupCreatedBy")
 }
 
 model Session {
