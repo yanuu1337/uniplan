@@ -11,7 +11,7 @@ export default async function AuthLayout({
     redirect("/");
   }
   return (
-    <main className="flex h-screen flex-col md:items-center md:justify-center">
+    <main className="my-8 flex min-h-screen flex-col items-stretch justify-start">
       {children}
     </main>
   );
