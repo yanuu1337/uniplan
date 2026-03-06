@@ -1,29 +1,115 @@
-# Create T3 App
+## UniPlan – Academic Calendar for Students
+ Tired of having to check multiple places to figure out where and when you have classes? Use **UniPlan** - an academic calendar for students.
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+> Instead of juggling multiple university systems, spreadsheets, and screenshots
+> of schedules, UniPlan gives you a clean weekly view of your classes and other
+> events, grouped into calendars you actually control.
 
-## What's next? How do I make an app with this?
+UniPlan was originally meant to be an app for myself and my friends, but I decided to open-source it in case someone else finds it useful.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+---
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+### What UniPlan does
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- **Weekly calendar view**: See your current week at a glance, with start/end
+  times and a focus on "what's next".
+- **Groups / calendars**:
+  - **Class groups** – shared calendars for courses or groups of people.
+  - **Personal calendar** – created automatically on sign‑up, just for you.
+- **Recurring events**: Model lectures, labs, or other repeating activities via
+  recurring event templates.
+- **Per‑group visibility**: Choose which groups are visible on your
+  calendar and color-code them to your liking.
 
-## Learn More
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+The project is still in active development, so expect rough edges and breaking
+changes. It is **not** production-ready software – more of a playground for
+ideas around student scheduling and group management.
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+---
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+### Tech stack
 
-## How do I deploy this?
+- **Framework**: [Next.js](https://nextjs.org) (App Router)
+- **API layer**: [tRPC](https://trpc.io) with React Query
+- **Database & ORM**: [PostgreSQL](https://www.postgresql.org/) +
+  [Prisma](https://www.prisma.io)
+- **Auth**: [Better Auth](https://better-auth.com/) (Email-based authentication)
+- **Styling & UI**:
+  - [Tailwind CSS 4](https://tailwindcss.com/)
+  - [shadcn/ui](https://ui.shadcn.com/) + [Radix](https://www.radix-ui.com/)
+  - [lucide-react](https://lucide.dev/) icons
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+> The project was originally bootstrapped with `create-t3-app`.
+
+---
+
+### Getting started (local development)
+
+#### 1. Prerequisites
+
+- **Node.js** 
+- **pnpm** 
+- **PostgreSQL** instance
+
+#### 2. Clone and install
+
+```bash
+git clone https://github.com/yanuu1337/uniplan.git
+cd uniplan
+pnpm install
+```
+
+#### 3. Environment variables
+
+Use the provided example file:
+
+```bash
+cp .env.example .env
+```
+
+Then fill in:
+
+If you need to add more environment variables, update the schema in `src/env.js`.
+
+#### 4. Database
+
+Generate and apply migrations using Prisma:
+
+```bash
+pnpm db:generate    # prisma migrate dev
+# or
+pnpm db:push        # prisma db push (for quick local setup)
+```
+
+You can inspect the database with:
+
+```bash
+pnpm db:studio
+```
+
+#### 5. Run the dev server
+
+```bash
+pnpm dev
+```
+
+By default the app runs on `http://localhost:3067`.
+
+Sign up with your email – UniPlan will automatically create a **personal
+calendar group** for you behind the scenes.
+
+---
+
+
+
+### Contributions
+
+This is a personal / hobby project, so the roadmap and priorities are driven by
+what seems useful at the moment.
+
+If you're reading this and feel like contributing (bug fixes, UX/UI improvements,
+or new ideas), feel free to open an issue or a pull request – even small ones are welcome.
+
+---
+
