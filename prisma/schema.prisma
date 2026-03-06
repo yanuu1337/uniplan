@@ -27,7 +27,7 @@ model ClassGroup {
   recurringEventTemplates RecurringEventTemplate[]
   events                  Event[]
   createdById             String
-  createdBy               User                     @relation(fields: [createdById], references: [id], name: "classGroupCreatedBy")
+  createdBy               User                     @relation(fields: [createdById], references: [id], name: "classGroupCreatedBy", onDelete: Cascade)
   type                    ClassGroupType           @default(CLASS)
 
   @@map("class_group")
@@ -43,7 +43,7 @@ model RecurringEventTemplate {
   startDate    DateTime // First occurrence date
   endDate      DateTime? // Last occurrence date (null = infinite)
   classGroupId String
-  classGroup   ClassGroup @relation(fields: [classGroupId], references: [id])
+  classGroup   ClassGroup @relation(fields: [classGroupId], references: [id], onDelete: Cascade)
 
   occurrences Event[] // Generated occurrences
 
@@ -73,7 +73,7 @@ model Event {
   overrideEndTime     DateTime?
 
   classGroupId String
-  classGroup   ClassGroup @relation(fields: [classGroupId], references: [id])
+  classGroup   ClassGroup @relation(fields: [classGroupId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
