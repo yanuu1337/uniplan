@@ -5,6 +5,7 @@ import { IBM_Plex_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { TRPCReactProvider } from "#/trpc/react";
 import Nav from "#/components/nav";
+import { TooltipProvider } from "#/components/ui/tooltip";
 
 export const metadata: Metadata = {
   title: "UniPlan - Academic Calendar for Students",
@@ -30,8 +31,10 @@ export default function RootLayout({
       <body>
         <TRPCReactProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Nav />
-            {children}
+            <TooltipProvider>
+              <Nav />
+              {children}
+            </TooltipProvider>
           </ThemeProvider>
         </TRPCReactProvider>
       </body>
