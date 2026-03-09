@@ -143,10 +143,10 @@ export function CalendarAddEvent() {
           variant="outline"
           size="sm"
           onClick={() => {
-            void router.push("/manage-calendars");
+            void router.push("/groups");
           }}
         >
-          Calendars
+          Groups
           <CalendarIcon className="ml-1.5 h-4 w-4" />
         </Button>
         <Button

@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { Card, CardContent, CardHeader } from "#/components/ui/card";
 import { ScrollArea, ScrollBar } from "#/components/ui/scroll-area";
 import { cn } from "#/lib/utils";
-import { CalendarItem } from "./calendar-item";
+import { CalendarItem } from "../../event/calendar-event";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { eventRouter } from "#/server/api/routers/event";
 
