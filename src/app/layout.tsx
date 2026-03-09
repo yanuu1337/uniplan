@@ -2,7 +2,7 @@ import "#/styles/globals.css";
 
 import { type Metadata } from "next";
 import { IBM_Plex_Mono } from "next/font/google";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "./dark-theme";
 import { TRPCReactProvider } from "#/trpc/react";
 import Nav from "#/components/nav";
 import { TooltipProvider } from "#/components/ui/tooltip";
