@@ -8,7 +8,7 @@ export default async function AuthLayout({
 }) {
   const session = await getSession();
   if (!session) {
-    redirect("/");
+    redirect("/sign-in");
   }
   return (
     <main className="my-8 flex min-h-screen flex-col items-stretch justify-start">
