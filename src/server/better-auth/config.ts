@@ -44,7 +44,6 @@ export const auth = betterAuth({
               id: crypto.randomUUID(),
               name: `${newSession.user.name}'s Personal Calendar`,
               description: `This is your personal calendar. Nobody can join - create a group to share.`,
-              password: undefined,
               createdById: newSession.user.id,
               type: ClassGroupType.PERSONAL,
               members: {
