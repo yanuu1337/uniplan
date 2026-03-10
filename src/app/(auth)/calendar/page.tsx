@@ -12,8 +12,17 @@ async function getWeekRange(
   searchParams: Promise<{ startDate?: string; endDate?: string }>,
 ) {
   const { startDate, endDate } = await searchParams;
-  const start = startDate ? dayjs(startDate) : dayjs().startOf("week");
-  const end = endDate ? dayjs(endDate) : dayjs().endOf("week");
+
+  const today = dayjs();
+  const weekday = today.day();
+  const daysSinceMonday = (weekday + 6) % 7;
+  const defaultStart = today.subtract(daysSinceMonday, "day").startOf("day");
+
+  const start = startDate ? dayjs(startDate).startOf("day") : defaultStart;
+  const end = endDate
+    ? dayjs(endDate).endOf("day")
+    : start.add(6, "day").endOf("day");
+
   return { start, end };
 }
 
