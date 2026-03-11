@@ -27,6 +27,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
 import { AddRecurringEventSchema } from "./schema";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export function AddRecurringEvent({
   children,
@@ -38,6 +39,7 @@ export function AddRecurringEvent({
   ) => Promise<{ success: boolean; errors: Record<string, string[]> }>;
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const form = useForm<z.infer<typeof AddRecurringEventSchema>>({
     resolver: zodResolver(AddRecurringEventSchema),
     defaultValues: {
@@ -55,10 +57,13 @@ export function AddRecurringEvent({
     setIsLoading(true);
     await action(data);
     setIsLoading(false);
+    toast.success("Recurring event added successfully");
+    setIsOpen(false);
+    form.reset();
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
