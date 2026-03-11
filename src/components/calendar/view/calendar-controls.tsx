@@ -117,7 +117,7 @@ export function CalendarAddEvent() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const { data: userWithGroups } = api.group.getUserGroups.useQuery();
+  const { data: userWithGroups } = api.user.getUserGroups.useQuery();
 
   const onSubmit = async (data: z.infer<typeof AddEventSchema>) => {
     setIsLoading(true);

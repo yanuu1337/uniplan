@@ -60,3 +60,10 @@ export const getOccurencesInDateRange = ({
 
   return occurrencesData;
 };
+
+export enum InviteStatus {
+  INVALID = "invalid",
+  EXPIRED = "expired",
+  MAX_USES = "max-uses",
+  VALID = "valid",
+}

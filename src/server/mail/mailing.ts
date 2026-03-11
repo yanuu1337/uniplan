@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 import { htmlToText } from "html-to-text";
 import { render } from "@react-email/components";
 import VerifyEmail from "./mail-components/mail-verification";
+import CalendarInvite from "./mail-components/calendar-invite";
 export const transporter = nodemailer.createTransport({
   host: env.EMAIL_HOST,
   port: env.EMAIL_PORT ?? 465,
@@ -13,6 +14,8 @@ export const transporter = nodemailer.createTransport({
   },
   tls: { rejectUnauthorized: false }, // self‑signed certs
 });
+
+const CONTACT_EMAIL = "contact@yanuu.pl";
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
   const text = htmlToText(html);
@@ -38,8 +41,29 @@ export const sendVerificationEmail = async (
       customerName,
       verifyUrl,
       expiresIn,
-      contactEmail: "contact@yanuu.pl",
+      contactEmail: CONTACT_EMAIL,
     }),
   );
   return await sendEmail(to, "Verify your email address", html);
+};
+
+export const sendCalendarInviteEmail = async (
+  to: string,
+  inviteeName: string,
+  inviterName: string,
+  groupName: string,
+  inviteLink: string,
+  expiresIn?: Date,
+) => {
+  const html = await render(
+    CalendarInvite({
+      inviteeName,
+      inviterName,
+      groupName,
+      inviteLink,
+      expiresIn,
+      contactEmail: CONTACT_EMAIL,
+    }),
+  );
+  return await sendEmail(to, `You are invited to join ${groupName}`, html);
 };

@@ -11,6 +11,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model GroupInvite {
+  id           String     @id @default(cuid())
+  classGroupId String
+  classGroup   ClassGroup @relation(fields: [classGroupId], references: [id], onDelete: Cascade)
+  email        String?
+  token        String     @unique
+  expiresAt    DateTime?
+  uses         Int        @default(0)
+  maxUses      Int?
+  createdById  String?
+  createdBy    User?      @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([classGroupId])
+  @@map("group_invite")
+}
+
 enum ClassGroupType {
   CLASS
   PERSONAL
@@ -20,7 +38,6 @@ model ClassGroup {
   id                      String                   @id
   name                    String
   description             String?
-  password                String?
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
   members                 UserClassGroup[]
@@ -29,6 +46,7 @@ model ClassGroup {
   createdById             String
   createdBy               User                     @relation(fields: [createdById], references: [id], name: "classGroupCreatedBy", onDelete: Cascade)
   type                    ClassGroupType           @default(CLASS)
+  invites                 GroupInvite[]
 
   @@map("class_group")
 }
@@ -139,6 +157,7 @@ model User {
 
   classGroupMemberships UserClassGroup[]
   createdClassGroups    ClassGroup[]     @relation(name: "classGroupCreatedBy")
+  groupInvites          GroupInvite[]
 
   @@unique([email])
   @@map("user")

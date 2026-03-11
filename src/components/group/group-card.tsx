@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "#/components/ui/button";
 import {
   Card,
@@ -7,18 +8,22 @@ import {
   CardFooter,
   CardContent,
 } from "#/components/ui/card";
-import type { groupRouter } from "#/server/api/routers/group";
+import type { userRouter } from "#/server/api/routers/user";
 import type { inferRouterOutputs } from "@trpc/server";
 import { ClassGroupType } from "generated/prisma";
-import { CalendarIcon, TrashIcon } from "lucide-react";
+import { CalendarIcon, TrashIcon, UserPlusIcon } from "lucide-react";
 import { TooltipContent, TooltipTrigger, Tooltip } from "../ui/tooltip";
+import { AddRecurringEvent } from "#/components/event/add-recurring-event";
+import { createRecurringEvent } from "../event/actions";
+import { InviteToGroup } from "./group-invite";
 
 type UserGroup = NonNullable<
-  inferRouterOutputs<typeof groupRouter>["getUserGroups"]
+  inferRouterOutputs<typeof userRouter>["getUserGroups"]
 >["classGroupMemberships"][number];
 
 export function GroupCard({ group }: { group: UserGroup }) {
   const isPersonal = group.classGroup.type === ClassGroupType.PERSONAL;
+  const isOwner = group.role === "OWNER";
   return (
     <Card className="w-full min-w-96">
       <CardHeader>
@@ -42,7 +47,7 @@ export function GroupCard({ group }: { group: UserGroup }) {
             <span className="inline-block w-fit">
               <Button
                 variant="destructive"
-                disabled={isPersonal}
+                disabled={isPersonal || isOwner}
                 size="sm"
                 className="gap-1"
               >
@@ -57,10 +62,47 @@ export function GroupCard({ group }: { group: UserGroup }) {
             </p>
           </TooltipContent>
         </Tooltip>
-        <Button variant="outline" size="sm" className="gap-1">
-          <CalendarIcon className="h-4 w-4" />
-          Add Recurring Event
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="inline-block w-fit">
+              <InviteToGroup group={group}>
+                <Button
+                  disabled={isPersonal}
+                  variant="outline"
+                  size="sm"
+                  className="gap-1"
+                >
+                  <UserPlusIcon className="h-4 w-4" />
+                  Invite
+                </Button>
+              </InviteToGroup>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>
+              {isPersonal
+                ? "You cannot invite to a personal group"
+                : "Invite to group"}
+            </p>
+          </TooltipContent>
+        </Tooltip>
+        <AddRecurringEvent
+          action={async (data) => {
+            const result = await createRecurringEvent(
+              data,
+              group.classGroup.id,
+            );
+            return {
+              success: result.success ?? false,
+              errors: result.errors ?? {},
+            };
+          }}
+        >
+          <Button variant="outline" size="sm" className="gap-1">
+            <CalendarIcon className="h-4 w-4" />
+            Add Recurring Event
+          </Button>
+        </AddRecurringEvent>
       </CardFooter>
     </Card>
   );
