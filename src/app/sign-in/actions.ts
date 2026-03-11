@@ -12,11 +12,14 @@ export const signIn = async (
 ) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const callbackURL =
+    (formData.get("callbackURL") as string | null | undefined) ?? "/";
 
   const response = await auth.api.signInEmail({
     body: {
       email,
       password,
+      callbackURL,
     },
     headers: await headers(),
   });
@@ -25,5 +28,5 @@ export const signIn = async (
   }
   if (!response.user) return { error: "Invalid email or password" };
   revalidatePath("/", "layout");
-  void redirect("/");
+  void redirect(callbackURL);
 };

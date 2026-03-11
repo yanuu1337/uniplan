@@ -1,5 +1,4 @@
 "use server";
-import { env } from "#/env";
 import { auth } from "#/server/better-auth";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -26,6 +25,8 @@ export const signUp = async (
   formData: FormData,
 ) => {
   const validated = schema.safeParse(Object.fromEntries(formData));
+  // const callbackURL =
+  //   (formData.get("callbackURL") as string | null | undefined) ?? "/";
   if (!validated.success) {
     return { errors: validated.error.flatten().fieldErrors };
   }
@@ -36,7 +37,7 @@ export const signUp = async (
         email: validated.data.email,
         name: validated.data.name,
         password: validated.data.password,
-        callbackURL: `${env.NEXT_PUBLIC_BASE_URL}/sign-up/email-confirm?email=${validated.data.email}`,
+        // callbackURL,
       },
     });
     if (!user.token) {

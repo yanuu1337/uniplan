@@ -2,6 +2,10 @@
 
 import { useActionState } from "react";
 import { ArrowRightIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import Link from "next/link";
 
 import { Button } from "#/components/ui/button";
 import { Input } from "#/components/ui/input";
@@ -16,7 +20,21 @@ type SignUpErrors = {
   generic?: string[];
 };
 
-export default function SignUpForm() {
+const signUpSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  name: z.string().min(3, { message: "Name must be at least 3 characters" }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters" }),
+});
+
+type SignUpFormValues = z.infer<typeof signUpSchema>;
+
+export default function SignUpForm({
+  callbackURL,
+}: {
+  callbackURL?: string;
+}) {
   const [state, formAction, isPending] = useActionState(signUp, {
     errors: {
       email: [] as string[],
@@ -27,18 +45,32 @@ export default function SignUpForm() {
   } satisfies { errors: SignUpErrors });
   const errors: SignUpErrors = state?.errors ?? {};
 
+  const form = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      email: "",
+      name: "",
+      password: "",
+    },
+  });
+
   return (
-    <form action={formAction} className="flex w-full max-w-md flex-col gap-4">
+    <form
+      action={formAction}
+      className="flex w-full max-w-md flex-col gap-4"
+    >
+      {callbackURL ? (
+        <input type="hidden" name="callbackURL" value={callbackURL} />
+      ) : null}
       <div className="flex flex-col gap-1">
         <label htmlFor="email" className="text-foreground text-sm font-medium">
           Email
         </label>
         <Input
           id="email"
-          name="email"
           type="email"
-          required
           placeholder="john@example.com"
+          {...form.register("email")}
         />
         <FieldError
           className="text-xs"
@@ -52,10 +84,9 @@ export default function SignUpForm() {
         </label>
         <Input
           id="name"
-          name="name"
           type="text"
-          required
           placeholder="John Doe"
+          {...form.register("name")}
         />
         <FieldError
           className="text-xs"
@@ -72,11 +103,9 @@ export default function SignUpForm() {
         </label>
         <Input
           id="password"
-          name="password"
           type="password"
-          required
-          minLength={8}
           placeholder="Enter your password"
+          {...form.register("password")}
         />
         <p className="text-muted-foreground text-xs">
           Must be at least 8 characters, with an uppercase letter and a number.
@@ -101,6 +130,19 @@ export default function SignUpForm() {
         Continue
         <ArrowRightIcon className="ml-1.5 h-4 w-4" />
       </Button>
+      <p className="text-muted-foreground text-sm">
+        Already have an account?{" "}
+        <Link
+          href={
+            callbackURL
+              ? `/sign-in?callbackURL=${encodeURIComponent(callbackURL)}`
+              : "/sign-in"
+          }
+          className="text-primary font-medium underline-offset-4 hover:underline"
+        >
+          Sign in
+        </Link>
+      </p>
     </form>
   );
 }
