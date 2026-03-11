@@ -1,11 +1,10 @@
 import "#/styles/globals.css";
-
 import { type Metadata } from "next";
 import { IBM_Plex_Mono } from "next/font/google";
 import { ThemeProvider } from "./dark-theme";
 import { TRPCReactProvider } from "#/trpc/react";
 import Nav from "#/components/nav";
-import { TooltipProvider } from "#/components/ui/tooltip";
+import { Toaster, TooltipProvider } from "#/components/ui";
 
 export const metadata: Metadata = {
   title: "UniPlan - Academic Calendar for Students",
@@ -34,6 +33,7 @@ export default function RootLayout({
             <TooltipProvider>
               <Nav />
               {children}
+              <Toaster richColors position="top-center" />
             </TooltipProvider>
           </ThemeProvider>
         </TRPCReactProvider>

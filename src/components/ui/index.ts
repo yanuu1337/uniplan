@@ -21,3 +21,5 @@ export * from "./textarea";
 export * from "./time-picker";
 export * from "./tooltip";
 export * from "./checkbox";
+export * from "./copy";
+export * from "./sonner";
