@@ -30,7 +30,7 @@ export default async function Home() {
 
               {!session && (
                 <form className="flex flex-col items-center gap-2">
-                  <div className="flex flex-col gap-2 sm:flex-row">
+                  <div className="flex flex-col gap-2">
                     <Button
                       className="bg-primary text-primary-foreground items-center px-32 py-4 text-lg font-semibold shadow-lg transition-all hover:scale-105 hover:cursor-pointer hover:bg-blue-700 hover:shadow-xl active:scale-95"
                       size="lg"
@@ -44,10 +44,10 @@ export default async function Home() {
                     <Button
                       className="bg-background-muted text-foreground items-center px-32 py-4 text-lg font-semibold shadow-lg transition-all hover:scale-105 hover:shadow-xl active:scale-95"
                       size="lg"
-                      variant="secondary"
+                      variant="outline"
                       onClick={async () => {
                         "use server";
-                        redirect("/signin");
+                        redirect("/sign-in");
                       }}
                     >
                       Sign In

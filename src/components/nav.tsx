@@ -44,6 +44,7 @@ export default async function Nav() {
             ) : (
               <div className="inline-flex gap-2">
                 <Button
+                  variant="outline"
                   className="font-bold"
                   onClick={async () => {
                     "use server";
@@ -53,7 +54,6 @@ export default async function Nav() {
                   Sign in
                 </Button>
                 <Button
-                  variant="secondary"
                   className="font-bold"
                   onClick={async () => {
                     "use server";
