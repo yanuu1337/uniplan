@@ -1,10 +1,8 @@
-import { auth } from "#/server/better-auth";
 import { getSession } from "#/server/better-auth/server";
 import { Button } from "#/components/ui/button";
-import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ThemeSwitcher } from "./mode-switcher";
+import { NavProfile } from "./nav-profile";
 
 export default async function Nav() {
   const session = await getSession();
@@ -19,28 +17,7 @@ export default async function Nav() {
           </div>
           <div className="flex items-center gap-4">
             {session ? (
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-600">
-                  {session.user?.name}
-                </span>
-                <form>
-                  <Button
-                    variant="outline"
-                    type="submit"
-                    className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-                    formAction={async () => {
-                      "use server";
-                      await auth.api.signOut({
-                        headers: await headers(),
-                      });
-                      revalidatePath("/");
-                      revalidatePath("/", "layout");
-                    }}
-                  >
-                    Sign out
-                  </Button>
-                </form>
-              </div>
+              <NavProfile session={session} />
             ) : (
               <div className="inline-flex gap-2">
                 <Button

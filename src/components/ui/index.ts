@@ -23,3 +23,4 @@ export * from "./tooltip";
 export * from "./checkbox";
 export * from "./copy";
 export * from "./sonner";
+export * from "./avatar";
