@@ -154,4 +154,21 @@ export const groupRouter = createTRPCRouter({
       }
       return { status: InviteStatus.VALID };
     }),
+
+  getEvents: protectedProcedure
+    .input(z.object({ groupId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.event.findMany({
+        where: { classGroupId: input.groupId },
+        include: {
+          classGroup: true,
+          createdBy: true,
+          template: {
+            include: {
+              classGroup: true,
+            },
+          },
+        },
+      });
+    }),
 });

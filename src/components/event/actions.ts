@@ -1,6 +1,9 @@
 "use server";
 import { api } from "#/trpc/server";
-import { AddRecurringEventSchema, DeleteEventSchema } from "./schema";
+import {
+  AddRecurringEventSchema,
+  DeleteEventSchema,
+} from "./schema";
 import { type z } from "zod";
 
 export const createRecurringEvent = async (
@@ -83,6 +86,56 @@ export const deleteEvent = async (eventId: string) => {
     return {
       success: false as const,
       errors: { generic: ["Failed to delete event"] },
+    };
+  }
+};
+
+export const updateRecurringEventTemplate = async (
+  templateId: string,
+  classGroupId: string,
+  event: z.infer<typeof AddRecurringEventSchema>,
+) => {
+  const validated = await AddRecurringEventSchema.safeParseAsync(event);
+  if (!validated.success) {
+    return { success: false, errors: validated.error.flatten().fieldErrors };
+  }
+
+  try {
+    await api.event.updateRecurringEventTemplate({
+      id: templateId,
+      classGroupId,
+      name: validated.data.name,
+      description: validated.data.description,
+      startDate: validated.data.startDate,
+      endDate: validated.data.endDate,
+      weekday: validated.data.weekday,
+      startTime: validated.data.startTime,
+      endTime: validated.data.endTime,
+    });
+
+    return { success: true as const };
+  } catch {
+    return {
+      success: false as const,
+      errors: { generic: ["Failed to update recurring event template"] },
+    };
+  }
+};
+
+export const deleteRecurringEventTemplate = async (
+  templateId: string,
+  classGroupId: string,
+) => {
+  try {
+    await api.event.deleteRecurringEventTemplate({
+      id: templateId,
+      classGroupId,
+    });
+    return { success: true as const };
+  } catch {
+    return {
+      success: false as const,
+      errors: { generic: ["Failed to delete recurring event template"] },
     };
   }
 };

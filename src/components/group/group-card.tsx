@@ -30,6 +30,7 @@ import {
   TooltipContent,
 } from "../ui";
 import { LeaveGroupDialog } from "./leave-group-dialog";
+import Link from "next/link";
 
 type UserGroup = NonNullable<
   inferRouterOutputs<typeof userRouter>["getUserGroups"]
@@ -85,14 +86,16 @@ export function GroupCard({ group }: { group: UserGroup }) {
               </TooltipContent>
             </Tooltip>
 
-            <DropdownMenuItem>
+            <DropdownMenuItem disabled>
               <UsersIcon className="h-4 w-4" />
               Manage members
             </DropdownMenuItem>
 
-            <DropdownMenuItem>
-              <CalendarIcon className="h-4 w-4" />
-              Manage recurring events
+            <DropdownMenuItem asChild>
+              <Link href={`/groups/${group.classGroup.id}/templates`}>
+                <CalendarIcon className="h-4 w-4" />
+                Manage recurring events
+              </Link>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
@@ -126,67 +129,3 @@ export function GroupCard({ group }: { group: UserGroup }) {
     </Card>
   );
 }
-
-/**
- * <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="inline-block w-fit">
-              <Button
-                variant="destructive"
-                disabled={isPersonal || isOwner}
-                size="sm"
-                className="gap-1"
-              >
-                <TrashIcon className="h-4 w-4" />
-                Leave
-              </Button>
-            </span>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>
-              {isPersonal ? "You cannot leave a personal group" : "Leave group"}
-            </p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="inline-block w-fit">
-              <InviteToGroup group={group}>
-                <Button
-                  disabled={isPersonal}
-                  variant="outline"
-                  size="sm"
-                  className="gap-1"
-                >
-                  <UserPlusIcon className="h-4 w-4" />
-                  Invite
-                </Button>
-              </InviteToGroup>
-            </span>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>
-              {isPersonal
-                ? "You cannot invite to a personal group"
-                : "Invite to group"}
-            </p>
-          </TooltipContent>
-        </Tooltip>
-        <AddRecurringEvent
-          action={async (data) => {
-            const result = await createRecurringEvent(
-              data,
-              group.classGroup.id,
-            );
-            return {
-              success: result.success ?? false,
-              errors: result.errors ?? {},
-            };
-          }}
-        >
-          <Button variant="outline" size="sm" className="gap-1">
-            <CalendarIcon className="h-4 w-4" />
-            Add Recurring Event
-          </Button>
-        </AddRecurringEvent>
- */
