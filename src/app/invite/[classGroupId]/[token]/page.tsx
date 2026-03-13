@@ -9,6 +9,7 @@ import {
   CardFooter,
 } from "#/components/ui";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 export default async function InvitePage({
   params,
 }: {
@@ -71,6 +72,7 @@ export default async function InvitePage({
                 token,
                 groupId: classGroupId,
               });
+              redirect(`/groups`);
             }}
           >
             Accept Invitation
