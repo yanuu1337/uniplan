@@ -24,3 +24,7 @@ export const CreateGroupInviteSchema = z
       maxUses: z.number().optional().default(0),
     }),
   );
+
+export const LeaveGroupSchema = z.object({
+  classGroupId: z.string().min(1, { message: "Class group ID is required" }),
+});

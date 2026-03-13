@@ -1,7 +1,7 @@
 import z from "zod";
 import bcrypt from "bcrypt";
 import { TRPCError } from "@trpc/server";
-import { ClassGroupRole } from "generated/prisma";
+import { ClassGroupRole, ClassGroupType } from "generated/prisma";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import dayjs from "dayjs";
 
@@ -127,7 +127,36 @@ export const userRouter = createTRPCRouter({
   leaveGroup: protectedProcedure
     .input(z.object({ classGroupId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.userClassGroup.delete({
+      const existingMembership = await ctx.db.userClassGroup.findUnique({
+        where: {
+          userId_classGroupId: {
+            userId: ctx.session.user.id,
+            classGroupId: input.classGroupId,
+          },
+        },
+        include: {
+          classGroup: true,
+        },
+      });
+      if (!existingMembership) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You are not a member of this group.",
+        });
+      }
+      if (existingMembership.role == ClassGroupRole.OWNER) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You cannot leave a group you are the owner of.",
+        });
+      }
+      if (existingMembership.classGroup.type == ClassGroupType.PERSONAL) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You cannot leave a personal group.",
+        });
+      }
+      return await ctx.db.userClassGroup.delete({
         where: {
           userId_classGroupId: {
             userId: ctx.session.user.id,

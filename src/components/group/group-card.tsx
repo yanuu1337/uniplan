@@ -1,21 +1,35 @@
 "use client";
-import { Button } from "#/components/ui/button";
+import type { userRouter } from "#/server/api/routers/user";
+import type { inferRouterOutputs } from "@trpc/server";
+import { ClassGroupType } from "generated/prisma";
 import {
+  CalendarIcon,
+  EllipsisIcon,
+  TrashIcon,
+  UserPlusIcon,
+  UsersIcon,
+} from "lucide-react";
+// import { AddRecurringEvent } from "#/components/event/add-recurring-event";
+// import { createRecurringEvent } from "../event/actions";
+import { InviteToGroup } from "./group-invite";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Card,
   CardTitle,
   CardHeader,
   CardDescription,
   CardFooter,
   CardContent,
-} from "#/components/ui/card";
-import type { userRouter } from "#/server/api/routers/user";
-import type { inferRouterOutputs } from "@trpc/server";
-import { ClassGroupType } from "generated/prisma";
-import { CalendarIcon, TrashIcon, UserPlusIcon } from "lucide-react";
-import { TooltipContent, TooltipTrigger, Tooltip } from "../ui/tooltip";
-import { AddRecurringEvent } from "#/components/event/add-recurring-event";
-import { createRecurringEvent } from "../event/actions";
-import { InviteToGroup } from "./group-invite";
+  Button,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "../ui";
+import { LeaveGroupDialog } from "./leave-group-dialog";
 
 type UserGroup = NonNullable<
   inferRouterOutputs<typeof userRouter>["getUserGroups"]
@@ -42,7 +56,79 @@ export function GroupCard({ group }: { group: UserGroup }) {
       </CardContent>
 
       <CardFooter className="gap-2">
-        <Tooltip>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              <EllipsisIcon className="h-4 w-4" />
+              Actions
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <Tooltip>
+              <TooltipTrigger className="w-full cursor-pointer">
+                <InviteToGroup group={group}>
+                  <DropdownMenuItem
+                    disabled={isPersonal}
+                    onSelect={(e) => e.preventDefault()}
+                  >
+                    <UserPlusIcon />
+                    Invite
+                  </DropdownMenuItem>
+                </InviteToGroup>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  {isPersonal
+                    ? "You cannot invite to a personal group"
+                    : "Invite to group"}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+
+            <DropdownMenuItem>
+              <UsersIcon className="h-4 w-4" />
+              Manage members
+            </DropdownMenuItem>
+
+            <DropdownMenuItem>
+              <CalendarIcon className="h-4 w-4" />
+              Manage recurring events
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            <Tooltip>
+              <TooltipTrigger className="w-full cursor-pointer">
+                <LeaveGroupDialog classGroupId={group.classGroup.id}>
+                  <DropdownMenuItem
+                    variant="destructive"
+                    disabled={isPersonal || isOwner}
+                    onSelect={(e) => e.preventDefault()}
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                    Leave
+                  </DropdownMenuItem>
+                </LeaveGroupDialog>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  {isPersonal
+                    ? "You cannot leave a personal group"
+                    : isOwner
+                      ? "You cannot leave a group you are the owner of"
+                      : "Leave group"}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </CardFooter>
+    </Card>
+  );
+}
+
+/**
+ * <Tooltip>
           <TooltipTrigger asChild>
             <span className="inline-block w-fit">
               <Button
@@ -103,7 +189,4 @@ export function GroupCard({ group }: { group: UserGroup }) {
             Add Recurring Event
           </Button>
         </AddRecurringEvent>
-      </CardFooter>
-    </Card>
-  );
-}
+ */
