@@ -5,6 +5,7 @@ import {
   CreateGroupInviteSchema,
   CreateGroupSchema,
   LeaveGroupSchema,
+  UpdateGroupPreferencesSchema,
 } from "./schema";
 import type { z } from "zod";
 import { env } from "#/env";
@@ -18,6 +19,26 @@ export const createGroup = async (data: z.infer<typeof CreateGroupSchema>) => {
     return { success: true };
   } catch {
     return { errors: { generic: ["Failed to create group"] } };
+  }
+};
+
+export const updateGroupPreferences = async (
+  data: z.infer<typeof UpdateGroupPreferencesSchema>,
+) => {
+  const validated = await UpdateGroupPreferencesSchema.safeParseAsync(data);
+  if (!validated.success) {
+    return { errors: validated.error.flatten().fieldErrors };
+  }
+  try {
+    await api.user.updateGroupPreferences(validated.data);
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return {
+      errors: {
+        generic: [error instanceof TRPCError ? error.message : "Unknown error"],
+      },
+    };
   }
 };
 

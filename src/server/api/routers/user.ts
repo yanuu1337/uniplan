@@ -184,4 +184,26 @@ export const userRouter = createTRPCRouter({
       },
     });
   }),
+  updateGroupPreferences: protectedProcedure
+    .input(
+      z.object({
+        classGroupId: z.string(),
+        isVisible: z.boolean().optional(),
+        color: z.string().optional().nullable(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.userClassGroup.update({
+        where: {
+          userId_classGroupId: {
+            userId: ctx.session.user.id,
+            classGroupId: input.classGroupId,
+          },
+        },
+        data: {
+          ...(input.isVisible !== undefined && { isVisible: input.isVisible }),
+          ...(input.color !== undefined && { color: input.color }),
+        },
+      });
+    }),
 });

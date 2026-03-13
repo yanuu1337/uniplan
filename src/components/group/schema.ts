@@ -28,3 +28,9 @@ export const CreateGroupInviteSchema = z
 export const LeaveGroupSchema = z.object({
   classGroupId: z.string().min(1, { message: "Class group ID is required" }),
 });
+
+export const UpdateGroupPreferencesSchema = z.object({
+  classGroupId: z.string().min(1, { message: "Class group ID is required" }),
+  isVisible: z.boolean().optional(),
+  color: z.string().optional().nullable(),
+});

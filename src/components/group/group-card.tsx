@@ -8,6 +8,7 @@ import {
   TrashIcon,
   UserPlusIcon,
   UsersIcon,
+  Settings2Icon,
 } from "lucide-react";
 // import { AddRecurringEvent } from "#/components/event/add-recurring-event";
 // import { createRecurringEvent } from "../event/actions";
@@ -31,6 +32,7 @@ import {
 } from "../ui";
 import { LeaveGroupDialog } from "./leave-group-dialog";
 import Link from "next/link";
+import { GroupPreferencesDialog } from "./group-preferences-dialog";
 
 type UserGroup = NonNullable<
   inferRouterOutputs<typeof userRouter>["getUserGroups"]
@@ -99,7 +101,18 @@ export function GroupCard({ group }: { group: UserGroup }) {
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
+            <GroupPreferencesDialog
+              classGroupId={group.classGroup.id}
+              initialIsVisible={group.isVisible}
+              initialColor={group.color}
+            >
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                <Settings2Icon className="h-4 w-4" />
+                Preferences
+              </DropdownMenuItem>
+            </GroupPreferencesDialog>
 
+            <DropdownMenuSeparator />
             <Tooltip>
               <TooltipTrigger className="w-full cursor-pointer">
                 <LeaveGroupDialog classGroupId={group.classGroup.id}>
