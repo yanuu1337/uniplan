@@ -1,5 +1,5 @@
 import { ClassGroupRole, ClassGroupType } from "generated/prisma";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import z from "zod";
 import bcrypt from "bcrypt";
 import { sendCalendarInviteEmail } from "#/server/mail/mailing";
@@ -109,7 +109,7 @@ export const groupRouter = createTRPCRouter({
       }
       return { success: true, token };
     }),
-  getInviteStatus: protectedProcedure
+  getInviteStatus: publicProcedure
     .input(
       z.object({
         token: z.string(),

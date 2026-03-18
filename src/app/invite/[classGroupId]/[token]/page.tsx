@@ -10,19 +10,41 @@ import {
 } from "#/components/ui";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { db } from "#/server/db";
+import ErrorPage from "#/components/error-page";
 export default async function InvitePage({
   params,
 }: {
   params: Promise<{ classGroupId: string; token: string }>;
 }) {
   const { classGroupId, token } = await params;
-  const isInGroupAlready = await api.user.getUserGroups();
-  const group = await api.group.getGroup({ id: classGroupId });
-  if (
-    isInGroupAlready?.classGroupMemberships.some(
-      (group) => group.classGroupId === classGroupId,
-    )
-  ) {
+  let isInGroupAlready = false;
+  try {
+    const userGroups = await api.user.getUserGroups();
+    if (userGroups) {
+      isInGroupAlready = userGroups.classGroupMemberships.some(
+        (group) => group.classGroupId === classGroupId,
+      );
+    }
+  } catch {
+    isInGroupAlready = false;
+  }
+
+  const group = await db.classGroup.findUnique({
+    where: { id: classGroupId },
+  });
+  if (!group) {
+    return (
+      <ErrorPage
+        error={{
+          title: "Group not found",
+          code: "404",
+          description: "The group you are looking for does not exist.",
+        }}
+      />
+    );
+  }
+  if (isInGroupAlready) {
     return (
       <div className="flex flex-col items-center justify-center">
         <Card className="w-full max-w-md">
